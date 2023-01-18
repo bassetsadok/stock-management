@@ -49,7 +49,6 @@ async def confirme_order(db: Session = Depends(get_db),current_user:int=Depends(
             availablity="not available"
 
         product_in_inventory_updated=inventory_base(product_id=product_in_inventory.product_id,quantity=quantity,availability=availablity)
-        print("product_in_inventory_updated== ",product_in_inventory_updated)
         product_in_inventory_query.update(product_in_inventory_updated.dict(),synchronize_session=False)
         db.commit()
 

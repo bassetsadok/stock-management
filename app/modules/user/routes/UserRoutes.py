@@ -51,9 +51,7 @@ async def purshase(product:ProductBase,quantity:int,db: Session = Depends(databa
 
 @router.get('/{id}',response_model=UserOut)
 def get_client(id:int,db: Session = Depends(database.get_db)):
-    print(id)
     user = db.query(User).filter(User.id == id ).first()
-    print(user)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id: {id} does not exist")
     

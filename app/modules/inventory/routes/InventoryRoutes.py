@@ -31,7 +31,6 @@ async def add_to_inventory(prod_to_inventory:inventory_base,db: Session = Depend
     product_exist_already=product_exist_already_query.first()
 
     if product_exist_already != None :
-        print("product_exist_already   ",product_exist_already)
         quantity=product_exist_already.quantity+prod_to_inventory.quantity  
 
         if quantity > 5:
@@ -46,16 +45,13 @@ async def add_to_inventory(prod_to_inventory:inventory_base,db: Session = Depend
         db.commit()
         return product_exist_already
     else:
-        print("heyy 5")
         if prod_to_inventory.quantity > 5:
             availablity="available"
         elif prod_to_inventory.quantity < 5 & prod_to_inventory.quantity > 0:
             availablity="run out soon"
         elif prod_to_inventory.quantity == 0:
             availablity="not available"
-        print("10")
         new_prod_to_inventory=Inventory(availability=availablity,product_id=prod_to_inventory.product_id,quantity=prod_to_inventory.quantity)
-        print(new_prod_to_inventory)
         db.add(new_prod_to_inventory)
         db.commit()
         db.refresh(new_prod_to_inventory)
