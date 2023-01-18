@@ -8,6 +8,7 @@ class Cart(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
+    total_price = Column(Float)
     user = relationship("User", back_populates="cart")
     cart_item = relationship("CartItem", back_populates="cart")
 
@@ -20,4 +21,4 @@ class CartItem(Base):
     product_id = Column(Integer, ForeignKey('products.id'))
     product = relationship("Product", back_populates="cart_item")
     quantity = Column(Integer)
-    price = Column(Integer)
+    price = Column(Float)

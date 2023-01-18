@@ -9,8 +9,7 @@ class Order(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship("User", back_populates="order")
-    status = Column(String)
-    total_price = Column(Integer)
+    total_price = Column(Float)
     order_item = relationship("OrderItem", back_populates="order")
 
 class OrderItem(Base):

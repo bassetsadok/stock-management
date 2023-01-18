@@ -5,7 +5,7 @@ from typing import Optional
 class ProductBase(BaseModel):
     name:str
     price:float
-    category_id:int
+    #category_id:int
 
 class ProductSchema(ProductBase):
     id:int 

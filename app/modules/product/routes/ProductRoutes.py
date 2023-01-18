@@ -17,13 +17,13 @@ async def create_product(product:ProductBase,db: Session = Depends(get_db),curre
     if not current_user.admin:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not autherized to perform requested action")
     
-    print(product.category_id)
+    print(product)
 
 
-    category = db.query(Category).filter(Category.id == product.category_id ).first()
+    #category = db.query(Category).filter(Category.id == product.category_id ).first()
 
-    if category == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not exist")
+    #if category == None:
+        #raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not exist")
 
     print("iam here")
     new_product=Product(**product.dict())

@@ -6,6 +6,7 @@ from ....db.database import Base
 
 class Inventory(Base):
     __tablename__ = 'inventory'
+
     id = Column(Integer, primary_key=True)
     product_id = Column(Integer, ForeignKey('products.id'))
     product = relationship("Product", back_populates="inventory")

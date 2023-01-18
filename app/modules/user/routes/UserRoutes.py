@@ -7,6 +7,7 @@ from ....autherization.auth import oauth2
 from ...user.models.User import User
 from ...product.schemas.ProductSchema import ProductBase
 from ...product.models.Product import Product
+from ...cart.models.Cart import Cart
 router=APIRouter(
     prefix="/users",
     tags=["Users"]
@@ -14,7 +15,8 @@ router=APIRouter(
 
 @router.post("/",status_code=status.HTTP_201_CREATED,response_model=UserOut)
 def create_user(user:UserCreate,db: Session = Depends(database.get_db)):
-    
+
+
     #hash the password - user.password
     hashed_password=utils.hash(user.password)
     user.password=hashed_password
@@ -22,6 +24,12 @@ def create_user(user:UserCreate,db: Session = Depends(database.get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    new_cart=Cart(user_id=new_user.id,total_price=0)
+    db.add(new_cart)
+    db.commit()
+    db.refresh(new_cart)
+
     return new_user
 
 @router.put("/purshase")
