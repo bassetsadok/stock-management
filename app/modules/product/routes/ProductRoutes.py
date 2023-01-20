@@ -38,3 +38,36 @@ def get_product(id:int,db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Product with id: {id} does not exist")
     
     return product
+
+#Delete product from db
+@router.delete("/{id}")
+async def delete_product(id:int,db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_current_user)):
+
+    product_query=db.query(Product).filter(Product.id==id)
+    product=product_query.first()
+
+    if product == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"Cart item {id} was not found")
+    
+    product_query.delete(synchronize_session=False)
+    db.commit()
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+#Update product in db
+@router.put("/{id}",response_model=ProductSchema)
+async def update_product(id:int,updated_product:ProductBase,db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_current_user)):
+    
+    product_query= db.query(Product).filter(Product.id == id)
+    product=product_query.first()
+
+    if product== None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"product {id} was not found")
+    
+    if current_user.admin != True:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Not autherized to perform requested action")
+
+    product_query.update(updated_product.dict(),synchronize_session=False)
+    db.commit()
+
+    return product_query.first()
