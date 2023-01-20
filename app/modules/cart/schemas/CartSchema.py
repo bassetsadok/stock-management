@@ -6,7 +6,6 @@ class cart_base(BaseModel):
     total_price : float
 
 class cart_schema(cart_base):
-    
     class Config:
         orm_mode=True
 

@@ -13,3 +13,4 @@ class ProductSchema(ProductBase):
     
     class Config:
         orm_mode=True
+
