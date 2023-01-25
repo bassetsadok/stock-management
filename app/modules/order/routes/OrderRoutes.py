@@ -40,7 +40,7 @@ async def confirme_order(db: Session = Depends(get_db),current_user:int=Depends(
         product_in_inventory_query = db.query(Inventory).filter(Inventory.product_id == new_order_item.product_id )
         product_in_inventory=product_in_inventory_query.first()
         quantity=product_in_inventory.quantity-new_order_item.quantity
-
+        availablity=""
         if quantity > 5:
             availablity="available"
         elif quantity < 5 & quantity > 0:

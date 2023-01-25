@@ -22,9 +22,7 @@ async def add_to_cart(cart_item:cart_item_base,db: Session = Depends(get_db),cur
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not autherized to perform requested action.")
     #check if product available in inventory
     product_avalaibility_check = db.query(Inventory).filter(Inventory.product_id == cart_item.product_id ).first()
-    print(product_avalaibility_check.quantity)
     if product_avalaibility_check.quantity <cart_item.quantity:
-        print("1")
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="This product is not available.")
     cart_query = db.query(Cart).filter(Cart.user_id == current_user.id )
     cart=cart_query.first()
@@ -33,22 +31,16 @@ async def add_to_cart(cart_item:cart_item_base,db: Session = Depends(get_db),cur
     cart_item_for_same_prod_query=db.query(CartItem).filter(CartItem.product_id==cart_item.product_id)
     cart_item_for_same_prod=cart_item_for_same_prod_query.first()
     #update the totale price in the cart
-    print("2")
     price=cart_item.quantity*product.price
-    print("3")
     cart.total_price=cart.total_price+price
     updated_cart=cart_schema(id=cart.id,user_id=cart.user_id,total_price=cart.total_price+price)
     cart_query.update(updated_cart.dict(),synchronize_session=False)
     db.commit()
     #if user already choose product and want to add more we dont need to create a new cart item, we will add on this
     if cart_item_for_same_prod != None :
-        print("4")
         quantity=cart_item_for_same_prod.quantity+cart_item.quantity
-        print("5")
         price=cart_item_for_same_prod.price+(cart_item.quantity*product.price)
-        print("6")
         cart_item_for_same_prod_scoop=cart_item_schema(id=cart_item_for_same_prod.id,cart_id=cart.id,product_id=product.id,quantity=quantity,price=price)
-        print("7")
         cart_item_for_same_prod_query.update(cart_item_for_same_prod_scoop.dict(),synchronize_session=False)
         db.commit()
         db.refresh(cart_item_for_same_prod)

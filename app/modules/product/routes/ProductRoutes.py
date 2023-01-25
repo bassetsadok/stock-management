@@ -1,7 +1,7 @@
 from typing import List
 from app.modules.product.models.Product import Product
 
-from app.modules.product.schemas.ProductSchema import ProductBase, ProductSchema
+from app.modules.product.schemas.ProductSchema import ProductBase, ProductSchema, update_product_base
 from ....autherization import oauth2
 from fastapi import   Response, status,HTTPException,Depends,APIRouter
 from sqlalchemy.orm import Session
@@ -56,7 +56,7 @@ async def delete_product(id:int,db: Session = Depends(get_db),current_user:int=D
 
 #Update product in db
 @router.put("/{id}",response_model=ProductSchema)
-async def update_product(id:int,updated_product:ProductBase,db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_current_user)):
+async def update_product(id:int,updated_product:update_product_base,db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_current_user)):
     
     product_query= db.query(Product).filter(Product.id == id)
     product=product_query.first()
@@ -66,8 +66,9 @@ async def update_product(id:int,updated_product:ProductBase,db: Session = Depend
     
     if current_user.admin != True:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Not autherized to perform requested action")
-
-    product_query.update(updated_product.dict(),synchronize_session=False)
+    product_dict=product.__dict__
+    updated_product_scoop=ProductSchema(product_dict)
+    product_query.update(**updated_product.dict(),synchronize_session=False)
     db.commit()
 
     return product_query.first()
